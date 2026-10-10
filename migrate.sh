@@ -9,11 +9,17 @@ systemctl disable tomcat9
 
 # We do not create user because on Ubuntu 22.04 with Tomcat9 it already exists
 TOMCAT_USER=tomcat
-TOMCAT_VERSION=11.0.24
+TOMCAT_BASE_URL="https://downloads.apache.org/tomcat/tomcat-11"
+# Magic: read the directory contents
+TOMCAT_VERSION=$(curl -fsSL "$TOMCAT_BASE_URL/" | grep -oE 'v11\.[0-9]+\.[0-9]+/' | sed 's|^v||; s|/$||' | sort -V | tail -n 1)
+if [[ -z "$TOMCAT_VERSION" ]]; then
+    echo "Failed to determine the latest Tomcat version" >&2
+    exit 1
+fi
 TOMCAT_DIR_OLD=/var/lib/tomcat9
 TOMCAT_DIR_NEW=/var/lib/tomcat11
 cd /tmp
-wget https://downloads.apache.org/tomcat/tomcat-11/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
+wget $TOMCAT_BASE_URL/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
 mkdir -p $TOMCAT_DIR_NEW
 tar xzf apache-tomcat-$TOMCAT_VERSION.tar.gz -C $TOMCAT_DIR_NEW --strip-components=1
 rm -f apache-tomcat-$TOMCAT_VERSION.tar.gz
