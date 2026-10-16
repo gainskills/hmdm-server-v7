@@ -12,6 +12,7 @@ import { ConfigurationFiles } from '../configuration-files/configuration-files';
 import { ConfigurationMdm } from '../configuration-mdm/configuration-mdm';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ConfigurationAppsFacadeService } from '../../services/configuration-applications-facade.service';
+import { APP_ACTION } from '../../const/app-action.const';
 
 @Component({
   selector: 'core-configuration-details',
@@ -54,7 +55,10 @@ export class ConfigurationDetails extends BaseComponent implements OnInit {
   }
 
   onSave(): void {
-    const applications = this.configurationAppsFacadeService.applications();
+    // Applications with action 0 ("do not install" / "block") are not linked to the configuration
+    const applications = this.configurationAppsFacadeService
+      .applications()
+      .filter((app) => app.action !== APP_ACTION.BLOCK);
 
     if (this.configurationDetailsFacadeService.configurationId()) {
       const config = this.configurationDetailsFacadeService.getUpdatedConfiguration();

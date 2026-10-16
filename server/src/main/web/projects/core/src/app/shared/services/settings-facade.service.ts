@@ -25,7 +25,7 @@ export class SettingsFacadeService {
   phoneMask = computed(() => {
     const settings = this.settings();
 
-    if (!settings) {
+    if (!settings || settings.phoneNumberFormat == null) {
       return '';
     }
 
