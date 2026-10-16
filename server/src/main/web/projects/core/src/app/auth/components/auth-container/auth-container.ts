@@ -27,7 +27,7 @@ export class AuthContainer implements OnInit {
     this.licenseService.getPluginLicenseKey().subscribe({
       next: (value) => {
         this.pluginLicenseKey.set(value);
-        if ((value.valid && value.expiryDays <= 7) || !value.valid) {
+        if ((value.valid && value.expiryDays != -1 && value.expiryDays <= 7) || !value.valid) {
           this.router.navigate(['/auth/missing-license']);
         }
       },

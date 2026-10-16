@@ -70,12 +70,21 @@ export class ConfigurationAppsFacadeService {
       value: app.id,
     })),
   );
-  applicationsVersionIdOptions = computed(() =>
-    this._allApplications().map((app) => ({
+  applicationsVersionIdOptions = computed(() => {
+    // Prefer the version used in the current configuration over the latest one.
+    // An app may appear several times, but only one entry carries usedVersionId,
+    // so skip the null entries to keep them from overwriting it in the map
+    const configVersions = new Map(
+      this._applications()
+        .filter((app) => app.usedVersionId != null)
+        .map((app) => [app.id, app.usedVersionId]),
+    );
+
+    return this._allApplications().map((app) => ({
       viewValue: app.pkg ? `${app.name} (${app.pkg})` : app.name,
-      value: app.usedVersionId,
-    })),
-  );
+      value: configVersions.get(app.id) ?? app.usedVersionId,
+    }));
+  });
 
   constructor() {
     effect(() => {
