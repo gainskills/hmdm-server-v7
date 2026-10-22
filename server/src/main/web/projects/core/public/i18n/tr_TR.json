@@ -211,6 +211,7 @@
   "question.exit.without.saving": "Değişiklikler kaydedilmedi. Neyse bu sayfadan ayrılalım mı?",
   "question.turn2common.application": "\"{{applicationName}}\" uygulamasını paylaşalım mı?",
   "question.app.upgrade": "\"{{v1}}\" uygulamasını \"{{v2}}\" yapılandırması için en son sürüme güncelleyelim mi?",
+  "error.configuration.save.before.upgrade": "Bir uygulamayı güncellemeden önce yapılandırmayı kaydedin",
 
   "error.application.setting.empty.app": "Uygulamayı belirt",
   "error.application.setting.empty.name": "Bir ad girin",
@@ -246,6 +247,10 @@
   "error.duplicate.customer.name": "Girilen ada sahip kuruluş zaten var. Farklı bir ad deneyin.",
   "error.duplicate.group.name": "Girilen ada sahip grup zaten var. Farklı bir ad deneyin.",
   "error.duplicate.configuration.name": "Girilen ada sahip yapılandırma zaten var. Farklı bir ad deneyin.",
+  "error.configuration.app.already.added": "Bu uygulama zaten yapılandırmada",
+  "form.configuration.apps.main.app.cannot.uninstall": "Ana uygulama kaldırılamaz",
+  "form.configuration.apps.content.app.cannot.uninstall": "İçerik uygulaması kaldırılamaz",
+  "form.configuration.apps.delete.prompt": "Uygulamayı yapılandırmadan silmek, uygulamanın başlatılmasını engeller. Silmek istiyor musunuz?",
   "error.duplicate.device.number": "Bu numaraya sahip bir cihaz zaten mevcut",
   "error.internal.server": "Dahili sunucu hatası",
   "error.permission.denied": "Yürütme hakkı yok",

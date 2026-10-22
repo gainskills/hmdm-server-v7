@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.net.URLDecoder;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
@@ -116,14 +117,15 @@ public class DownloadFilesServlet extends HttpServlet {
                 return;
             }
 
+            // Cross XSS vulnerability fix: prevent opening a potentially malicious file having the Headwind MDM domain
+            // (set before the Range check so partial responses carry it too)
+            resp.addHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
+
             String range = req.getHeader("Range");
-            if (range != null && range.startsWith("bytes=")) {
-                sendPartialContent(range.substring(6), file, resp);
+            if (range != null && range.startsWith("bytes=") && sendPartialContent(range.substring(6), file, resp)) {
                 return;
             }
 
-            // Cross XSS vulnerability fix: prevent opening a potentially malicious file having the Headwind MDM domain
-            resp.addHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
             try (InputStream input = new FileInputStream(file);
                  ServletOutputStream outputStream = resp.getOutputStream()) {
                 long length = file.length();
@@ -148,40 +150,84 @@ public class DownloadFilesServlet extends HttpServlet {
 
     }
 
-    private void sendPartialContent(String rangeStr, File file, HttpServletResponse resp) {
+    /**
+     * Sends a single byte range ("first-last", "first-" or "-suffixLength"; positions are inclusive).
+     *
+     * @return false if the range can't be parsed or lists several ranges: the caller then sends the
+     * whole file, which HTTP allows. True if a response has been sent (206, or 416 for a range
+     * outside the file).
+     */
+    private boolean sendPartialContent(String rangeStr, File file, HttpServletResponse resp) {
+        long length = file.length();
+        long start;
+        long end;
         try {
-            String[] range = rangeStr.split("-");
-            Long start = Long.parseLong(range[0]);
-            Long end = null;
-            if (range.length > 1) {
-                end = Long.parseLong(range[1]);
+            if (rangeStr.contains(",")) {
+                return false;
             }
-            InputStream input = new FileInputStream(file);
-            ServletOutputStream outputStream = resp.getOutputStream();
-            long length = file.length();
-            if (end == null) {
-                end = length;
+            int dash = rangeStr.indexOf('-');
+            if (dash < 0) {
+                return false;
             }
-
-            resp.setStatus(206);
-            resp.setHeader("Content-Range", "bytes " + start + "-" + end + "/" + length);
-            long contentLength = end - start;
-            if (length <= 2147483647L) {
-                resp.setContentLength((int)contentLength);
+            String first = rangeStr.substring(0, dash).trim();
+            String last = rangeStr.substring(dash + 1).trim();
+            if (first.isEmpty()) {
+                // Suffix range: the last N bytes of the file
+                long suffixLength = Long.parseLong(last);
+                if (suffixLength <= 0) {
+                    return sendRangeNotSatisfiable(length, resp);
+                }
+                start = Math.max(0, length - suffixLength);
+                end = length - 1;
             } else {
-                resp.addHeader("Content-Length", Long.toString(contentLength));
+                start = Long.parseLong(first);
+                long lastPos = last.isEmpty() ? Long.MAX_VALUE : Long.parseLong(last);
+                if (start < 0 || lastPos < start) {
+                    // Not a valid range ("5-4"): ignored, like an unparsable one
+                    return false;
+                }
+                end = Math.min(lastPos, length - 1);
             }
-            if (file.getAbsolutePath().endsWith(".apk")) {
-                resp.setContentType(CONTENT_TYPE_APK);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
+        if (start >= length) {
+            return sendRangeNotSatisfiable(length, resp);
+        }
+
+        long contentLength = end - start + 1;
+        resp.setStatus(206);
+        resp.setHeader("Content-Range", "bytes " + start + "-" + end + "/" + length);
+        resp.setContentLengthLong(contentLength);
+        if (file.getAbsolutePath().endsWith(".apk")) {
+            resp.setContentType(CONTENT_TYPE_APK);
+        }
+
+        try (RandomAccessFile input = new RandomAccessFile(file, "r")) {
+            input.seek(start);
+            ServletOutputStream outputStream = resp.getOutputStream();
+            byte[] buffer = new byte[65536];
+            long remaining = contentLength;
+            while (remaining > 0) {
+                int read = input.read(buffer, 0, (int) Math.min(buffer.length, remaining));
+                if (read < 0) {
+                    break;
+                }
+                outputStream.write(buffer, 0, read);
+                remaining -= read;
             }
-
-            input.skip(start);
-
-            IOUtils.copy(input, outputStream, contentLength);
             outputStream.flush();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return true;
+    }
+
+    private boolean sendRangeNotSatisfiable(long length, HttpServletResponse resp) {
+        resp.setStatus(416);
+        resp.setHeader("Content-Range", "bytes */" + length);
+        resp.setContentLength(0);
+        return true;
     }
 }

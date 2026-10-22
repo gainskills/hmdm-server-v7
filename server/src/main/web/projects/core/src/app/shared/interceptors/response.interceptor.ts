@@ -19,12 +19,17 @@ export const responseInterceptor: HttpInterceptorFn = (req, next) => {
         authStateService.isAuthenticated.next(false);
 
         // Don't redirect if already on an auth page (e.g. reset-password, sign-in)
-        console.log(globalThis.location.pathname);
+        // The path inside the app: without the panel's path on the server (e.g. /hmdm)
+        const basePath = new URL(document.baseURI).pathname;
+        const pathname = globalThis.location.pathname.startsWith(basePath)
+          ? '/' + globalThis.location.pathname.substring(basePath.length)
+          : globalThis.location.pathname;
+        console.log(pathname);
 
-        if (!globalThis.location.pathname.startsWith('/auth/')) {
+        if (!pathname.startsWith('/auth/')) {
           console.log('responseInterceptor: Not on an auth page, redirecting to sign-in');
 
-          const returnUrl = globalThis.location.pathname + globalThis.location.search;
+          const returnUrl = pathname + globalThis.location.search;
           router.navigate(['/auth/sign-in'], { queryParams: { returnUrl } });
         }
       }

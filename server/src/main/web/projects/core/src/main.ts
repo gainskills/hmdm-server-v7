@@ -19,6 +19,10 @@ export type TServerPlugin = {
   icon: string;
 };
 
+// The panel's path on the server: '' at the server root, e.g. '/hmdm' under a context path.
+// Plugins served by the panel itself are registered as /plugins/<id> and need this in front.
+const basePath = new URL(document.baseURI).pathname.replace(/\/$/, '');
+
 fetch(`${environment.baseApiUrl}rest/public/plugin/main/registered`)
   .then((response) => response.json())
   .then((serverManifest) => {
@@ -38,7 +42,7 @@ fetch(`${environment.baseApiUrl}rest/public/plugin/main/registered`)
             return availablePlugin.startsWith(plugin.baseUrl);
           }
 
-          return availablePlugin === `/plugins/${plugin.identifier}/`;
+          return availablePlugin === `${basePath}/plugins/${plugin.identifier}/`;
         }),
     );
 
@@ -69,7 +73,11 @@ function transformManifest(serverManifest: THttpResponse<TServerPlugin[]>) {
   return serverManifestData
     .filter((plugin) => !plugin.disabled && (!!plugin.baseUrl || !!plugin.baseUrlDev))
     .reduce((acc, plugin) => {
-      const baseUrl = environment.development ? plugin.baseUrlDev : plugin.baseUrl;
+      const baseUrl = environment.development
+        ? plugin.baseUrlDev
+        : plugin.baseUrl?.startsWith('/plugins/')
+          ? basePath + plugin.baseUrl
+          : plugin.baseUrl;
 
       (window as any).__DYNPLUGINS__.push({
         ...plugin,

@@ -89,6 +89,9 @@ export class VersionCheckerService {
   }
 
   private clearCache(): void {
+    if (!this.swUpdate.isEnabled) {
+      return;
+    }
     this.swUpdate.checkForUpdate().then(() => {
       if ('caches' in window) {
         caches.keys().then((cacheNames: string[]) => {

@@ -110,7 +110,7 @@ export class ConfigurationCommon extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.formGroup.valueChanges.pipe(this.untilDestroyed()).subscribe(() => {
-      this.configurationDetailsFacadeService.setConfigurationCommonValue(this.formValue);
+      this.configurationDetailsFacadeService.setConfigurationCommon(this.formValue);
     });
 
     this.formGroup.controls.scheduleAppUpdate.valueChanges

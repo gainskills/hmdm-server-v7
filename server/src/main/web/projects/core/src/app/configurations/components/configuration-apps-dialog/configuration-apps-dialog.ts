@@ -5,6 +5,8 @@ import { ApplicationDialogService } from '../../../applications/services/applica
 import { ConfigurationAppFormConfig } from '../../configs/configuration-app-form.config';
 import { ConfigurationAppForm } from '../configuration-app-form/configuration-app-form';
 import { HasPermissionDirective } from '../../../shared/directives/has-permission.directive';
+import { SnackBarService } from '../../../shared/services/snack-bar.service';
+import { ConfigurationAppsFacadeService } from '../../services/configuration-applications-facade.service';
 
 @Component({
   selector: 'core-configuration-apps-dialog',
@@ -21,6 +23,8 @@ import { HasPermissionDirective } from '../../../shared/directives/has-permissio
 export class ConfigurationAppsDialog extends DialogBase implements OnInit {
   private readonly configurationAppFormConfig = inject(ConfigurationAppFormConfig);
   private readonly appDialogService = inject(ApplicationDialogService);
+  private readonly configurationAppsFacadeService = inject(ConfigurationAppsFacadeService);
+  private readonly snackBarService = inject(SnackBarService);
 
   formGroup = this.configurationAppFormConfig.getFormGroup();
   app: TApplicationDTO | null = null;
@@ -28,6 +32,12 @@ export class ConfigurationAppsDialog extends DialogBase implements OnInit {
   ngOnInit(): void {}
 
   override onSave(): void {
+    // Already in the configuration: say so and keep the dialog open to pick another app
+    if (this.app && this.configurationAppsFacadeService.isInConfiguration(this.app.id)) {
+      this.snackBarService.info('error.configuration.app.already.added');
+      return;
+    }
+
     this.dialogRef.close(this.app);
   }
 

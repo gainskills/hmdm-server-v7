@@ -211,6 +211,7 @@
   "question.exit.without.saving": "更改未储存。无论如何要离开此页面？",
   "question.turn2common.application": "共享应用程式\"{{applicationName}}\"吗？",
   "question.app.upgrade": "将应用程式\"{{v1}}\"更新到配置\"{{v2}}\"的最新版本吗？",
+  "error.configuration.save.before.upgrade": "请先保存配置，再升级应用",
 
   "error.application.setting.empty.app": "指定应用程式",
   "error.application.setting.empty.name": "输入名称",
@@ -246,6 +247,10 @@
   "error.duplicate.customer.name": "输入名称的组织已经存在。尝试使用其他名称。",
   "error.duplicate.group.name": "输入名称的组合已经存在。尝试使用其他名称。",
   "error.duplicate.configuration.name": "使用输入名称的配置已存在。尝试使用其他名称。",
+  "error.configuration.app.already.added": "该应用已在此配置中",
+  "form.configuration.apps.main.app.cannot.uninstall": "无法卸载主应用",
+  "form.configuration.apps.content.app.cannot.uninstall": "无法卸载内容应用",
+  "form.configuration.apps.delete.prompt": "从配置中删除该应用将导致其无法启动。是否删除？",
   "error.duplicate.device.number": "已经存在具有该编号的设备",
   "error.internal.server": "内部服务器错误",
   "error.permission.denied": "没有执行权",

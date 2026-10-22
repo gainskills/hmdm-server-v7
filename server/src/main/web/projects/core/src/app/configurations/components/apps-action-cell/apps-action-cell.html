@@ -1,4 +1,8 @@
-<div class="cell">
+<div
+  class="cell"
+  [matTooltip]="lockMessage() ?? '' | translate"
+  [matTooltipDisabled]="!lockMessage()"
+>
   <hmdm-selector
     [showLabel]="false"
     [showError]="false"

@@ -1,15 +1,26 @@
 import { HttpClient } from '@angular/common/http';
-import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import {
+  computed,
+  effect,
+  inject,
+  Injectable,
+  Signal,
+  signal,
+  untracked,
+  WritableSignal,
+} from '@angular/core';
 import { take } from 'rxjs';
 import { TOption } from 'hmdm-ui-kit';
 import { TGroup } from '../types/group.type';
 import { THttpResponse } from '../types/http-response.type';
+import { UserStateService } from './user-state.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GroupService {
   private readonly http: HttpClient = inject(HttpClient);
+  private readonly userStateService = inject(UserStateService);
 
   private _allGroups: WritableSignal<TGroup[]> = signal([]);
   allGroups = this._allGroups.asReadonly();
@@ -21,7 +32,17 @@ export class GroupService {
   );
 
   constructor() {
-    this.fetchAll();
+    // Reload on user change (login / impersonate), the data is customer-specific
+    effect(() => {
+      const userId = this.userStateService.currentUser()?.id;
+      untracked(() => {
+        if (userId) {
+          this.fetchAll();
+        } else {
+          this._allGroups.set([]);
+        }
+      });
+    });
   }
 
   fetchAll(): void {

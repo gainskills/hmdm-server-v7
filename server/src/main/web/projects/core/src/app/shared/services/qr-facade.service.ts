@@ -83,6 +83,10 @@ export class QrFacadeService {
 
     url += this.buildUrlParams(opts.params);
 
+    // A new address every time: browsers reuse an image already loaded at the same address
+    // while the page is open, whatever the cache headers say, and would show an outdated QR code
+    url += `&t=${Date.now()}`;
+
     return `${baseApiUrl}${url}`;
   }
 

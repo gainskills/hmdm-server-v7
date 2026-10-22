@@ -205,6 +205,7 @@
   "question.exit.without.saving": "Các thay đổi chưa được lưu. Bạn vẫn muốn rời khỏi trang này?",
   "question.turn2common.application": "Chia sẻ ứng dụng '{{applicationName}}'?",
   "question.app.upgrade": "Cập nhật ứng dụng '{{v1}}' lên phiên bản mới nhất cho cấu hình '{{v2}}'?",
+  "error.configuration.save.before.upgrade": "Hãy lưu cấu hình trước khi cập nhật ứng dụng",
 
   "error.application.setting.empty.app": "Chỉ định ứng dụng",
   "error.application.setting.empty.name": "Nhập tên",
@@ -239,6 +240,10 @@
   "error.duplicate.customer.name": "Tổ chức với tên này đã tồn tại. Hãy thử tên khác.",
   "error.duplicate.group.name": "Nhóm với tên này đã tồn tại. Hãy thử tên khác.",
   "error.duplicate.configuration.name": "Cấu hình với tên này đã tồn tại. Hãy thử tên khác.",
+  "error.configuration.app.already.added": "Ứng dụng này đã có trong cấu hình",
+  "form.configuration.apps.main.app.cannot.uninstall": "Không thể gỡ cài đặt ứng dụng chính",
+  "form.configuration.apps.content.app.cannot.uninstall": "Không thể gỡ cài đặt ứng dụng nội dung",
+  "form.configuration.apps.delete.prompt": "Xóa ứng dụng khỏi cấu hình sẽ ngăn ứng dụng được khởi chạy. Bạn có muốn xóa không?",
   "error.duplicate.device.number": "Đã tồn tại thiết bị với số này",
   "error.internal.server": "Lỗi máy chủ nội bộ",
   "error.permission.denied": "Không có quyền thực hiện",

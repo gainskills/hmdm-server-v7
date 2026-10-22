@@ -54,6 +54,8 @@ export class FilesForm extends BaseComponent implements OnInit {
 
     if (data) {
       this.formGroup.patchValue({ ...data, externalUrl: data.url, filePath: data.filePath ?? '' });
+      // The listener that sets isExternal is not subscribed yet at this point
+      this.isExternal.set(!!data.external);
       this.isEdit.set(true);
       this.formGroup.controls.external.disable();
     }

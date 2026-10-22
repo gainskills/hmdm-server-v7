@@ -1,0 +1,22 @@
+<div class="cell">
+  <span>{{ params().data.version }}</span>
+
+  @if (canUpgrade()) {
+    <a
+      class="cell-upgrade"
+      role="button"
+      tabindex="0"
+      [matTooltip]="
+        'configuration.app.version.upgrade.message'
+          | translate
+            : {
+                installedVersion: params().data.version,
+                latestVersion: params().data.latestVersionText
+              }
+      "
+      (click)="onUpgradeClick()"
+      (keydown.enter)="onUpgradeClick()"
+      >{{ 'button.upgrade' | translate }}</a
+    >
+  }
+</div>

@@ -108,6 +108,8 @@ export class FilesDialog extends DialogBase implements OnInit {
         devicePath: data.devicePath,
         replaceVariables: data.replaceVariables,
         url: data.externalUrl ?? '',
+        // The server stores the external URL from this field; without it the URL is erased
+        externalUrl: data.externalUrl ?? '',
       };
     } else {
       return {

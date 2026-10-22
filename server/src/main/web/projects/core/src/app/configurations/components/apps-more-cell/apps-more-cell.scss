@@ -1,0 +1,20 @@
+@use '@angular/material' as mat;
+.cell {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+
+  @include mat.icon-button-overrides(
+    (
+      icon-color: var(--mat-sys-on-primary),
+      disabled-icon-color: var(--mat-sys-outline),
+    )
+  );
+}
+
+// Keeps both button slots in place when one of them is not available for the row
+.cell-action-hidden {
+  visibility: hidden;
+}

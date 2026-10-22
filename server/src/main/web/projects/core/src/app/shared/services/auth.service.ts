@@ -191,6 +191,7 @@ export class AuthService {
       tap(() => {
         this.authStateService.isAuthenticated.next(false);
         this._currentUser.set(null);
+        this.userStateService.setCurrentUser(null);
 
         document.cookie = 'hsid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         this.authStateService.isAuthenticated.next(false);

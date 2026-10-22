@@ -8,6 +8,7 @@ import { TConfigurationCommonFormValue } from '../types/configuration-common-for
 import { TConfigurationDesignFormValue } from '../types/configuration-design-form.type';
 import { TConfigurationMDMFormValue } from '../types/configuration-mdm-form.type';
 import { ConfigurationService as SharedConfigurationService } from '../../shared/services/configuration.service';
+import { SnackBarService } from '../../shared/services/snack-bar.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,7 @@ import { ConfigurationService as SharedConfigurationService } from '../../shared
 export class ConfigurationDetailsFacadeService {
   private readonly configurationService = inject(ConfigurationService);
   private readonly sharedConfigurationService = inject(SharedConfigurationService);
+  private readonly snackBarService = inject(SnackBarService);
   private readonly _configurationId: WritableSignal<number | null> = signal(null);
   private readonly _currentConfiguration: WritableSignal<TConfigurationDTO | null> = signal(null);
   private readonly _reloadTrigger: WritableSignal<number> = signal(0);
@@ -54,6 +56,11 @@ export class ConfigurationDetailsFacadeService {
 
   setCurrentConfigurationId(id: number | null): void {
     this._hasUnsavedChanges.set(false);
+    // This service lives for the whole session: drop the tab values kept from the configuration
+    // edited before, otherwise saving this one would copy them onto it
+    this.configurationCommonValue = null;
+    this.configurationDesignValue = null;
+    this.configurationMDMValue = null;
     this._configurationId.set(id);
     this._reloadTrigger.update((v) => v + 1);
 
@@ -66,15 +73,15 @@ export class ConfigurationDetailsFacadeService {
     }
   }
 
-  setConfigurationCommonValue(formValue: TConfigurationCommonFormValue): void {
+  setConfigurationCommon(formValue: TConfigurationCommonFormValue): void {
     this.markUnsavedChanges();
+
+    this.configurationCommonValue = formValue;
 
     this._currentConfiguration.update((config) => {
       if (!config) {
         return config;
       }
-
-      this.configurationCommonValue = formValue;
 
       return {
         ...config,
@@ -250,6 +257,17 @@ export class ConfigurationDetailsFacadeService {
     });
 
     return newApp;
+  }
+
+  // Checks the configuration before it is saved; shows an error and returns false if it's inconsistent
+  checkConfigConsistency(config: TConfigurationDTO): boolean {
+    // Kiosk mode needs a content app (MDM settings)
+    if (config.kioskMode && !config.contentAppId) {
+      this.snackBarService.error('error.empty.configuration.contentApp');
+      return false;
+    }
+
+    return true;
   }
 
   saveConfiguration(configuration: TConfigurationDTO): void {

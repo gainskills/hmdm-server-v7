@@ -10,7 +10,7 @@ export class ConfigurationFilesTableConfig {
   getConfig(): TTableConfig {
     return {
       trackBy(index, item) {
-        return `file-${item.id}-${item.url}-${item.devicePath}-${item.replaceVariables}-${item.remove}`;
+        return `file-${item.id}-${item.url}-${item.path}-${item.replaceVariables}-${item.remove}`;
       },
       columns: [
         {
@@ -22,7 +22,7 @@ export class ConfigurationFilesTableConfig {
           title: 'table.heading.file.description',
         },
         {
-          field: 'devicePath',
+          field: 'path',
           title: 'table.heading.file.devicepath',
         },
         {

@@ -1,5 +1,8 @@
 import { computed, effect, inject, Injectable, signal, WritableSignal } from '@angular/core';
-import { finalize, take } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialog } from 'hmdm-ui-kit';
+import { filter, finalize, switchMap, take } from 'rxjs';
+import { SnackBarService } from '../../shared/services/snack-bar.service';
 import { TOption, TTableSortState } from '../../../../../hmdm-ui-kit/src/public-api';
 import { ApplicationService } from '../../entity/application/services/application.service';
 import { TApplicationDTO } from '../../entity/application/types/application-dto.type';
@@ -21,6 +24,8 @@ export class ConfigurationAppsFacadeService {
   private configurationService = inject(ConfigurationService);
   private configurationDetailsFacadeService = inject(ConfigurationDetailsFacadeService);
   private applicationService = inject(ApplicationService);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBarService = inject(SnackBarService);
   private searchTerm: WritableSignal<string> = signal('');
 
   private readonly showSystemApps: WritableSignal<boolean> = signal(false);
@@ -32,10 +37,7 @@ export class ConfigurationAppsFacadeService {
   isLoadingApplications: WritableSignal<boolean> = signal(false);
   tableData = computed(() => {
     const apps = this._applications().filter((app) => {
-      return (
-        (app.action !== APP_ACTION.BLOCK || app.actionChanged) &&
-        (this.showSystemApps() || !app.system)
-      );
+      return this.isListed(app) && (this.showSystemApps() || !app.system);
     });
 
     if (this._sortState()) {
@@ -84,6 +86,41 @@ export class ConfigurationAppsFacadeService {
       viewValue: app.pkg ? `${app.name} (${app.pkg})` : app.name,
       value: configVersions.get(app.id) ?? app.usedVersionId,
     }));
+  });
+
+  // Package of the configuration's main (MDM) app; follows an unsaved change on the MDM tab.
+  // mainAppId is a version id, so find the app that version belongs to
+  private readonly mainAppPkg = computed(() => {
+    const mainAppId = this.configurationDetailsFacadeService.currentConfiguration()?.mainAppId;
+
+    if (!mainAppId) {
+      return null;
+    }
+
+    const isMainVersion = (app: TApplicationDTO) =>
+      app.usedVersionId === mainAppId || app.latestVersion === mainAppId;
+    const mainApp =
+      this._applications().find(isMainVersion) ?? this._allApplications().find(isMainVersion);
+
+    return mainApp?.pkg || null;
+  });
+
+  // Package of the configuration's content app; follows an unsaved change on the MDM tab.
+  // contentAppId is a version id, so find the app that version belongs to
+  private readonly contentAppPkg = computed(() => {
+    const contentAppId =
+      this.configurationDetailsFacadeService.currentConfiguration()?.contentAppId;
+
+    if (!contentAppId) {
+      return null;
+    }
+
+    const isContentVersion = (app: TApplicationDTO) =>
+      app.usedVersionId === contentAppId || app.latestVersion === contentAppId;
+    const contentApp =
+      this._applications().find(isContentVersion) ?? this._allApplications().find(isContentVersion);
+
+    return contentApp?.pkg || null;
   });
 
   constructor() {
@@ -153,10 +190,56 @@ export class ConfigurationAppsFacadeService {
   }
 
   addApplication(app: TApplicationDTO): void {
+    if (this.isInConfiguration(app.id)) {
+      return;
+    }
+
     this.configurationDetailsFacadeService.markUnsavedChanges();
 
     const currentApps = this._applications();
     this._applications.set([...currentApps, { ...app, actionChanged: true }]);
+  }
+
+  // True if the app is already in the configuration's list (the entries the list shows,
+  // whatever the search text or the "Show preinstalled applications" switch)
+  isInConfiguration(appId: number): boolean {
+    return this._applications().some((app) => app.id === appId && this.isListed(app));
+  }
+
+  // Every entry with the package of the configuration's main app: duplicates and other versions too
+  isMainApp(app: TApplicationDTO): boolean {
+    const pkg = this.mainAppPkg();
+    return !!pkg && app.pkg === pkg;
+  }
+
+  // Same for the configuration's content app
+  isContentApp(app: TApplicationDTO): boolean {
+    const pkg = this.contentAppPkg();
+    return !!pkg && app.pkg === pkg;
+  }
+
+  // Message key explaining why the app's action and removal are locked, or null if they are not
+  getUninstallLockMessage(app: TApplicationDTO): string | null {
+    if (this.isMainApp(app)) {
+      return 'form.configuration.apps.main.app.cannot.uninstall';
+    }
+
+    if (this.isContentApp(app)) {
+      return 'form.configuration.apps.content.app.cannot.uninstall';
+    }
+
+    return null;
+  }
+
+  // Removes the clicked entry only (by object, not by id: duplicates share the id).
+  // Stored when the configuration is saved; the main and content apps are never removed
+  removeApplication(app: TApplicationDTO): void {
+    if (this.isMainApp(app) || this.isContentApp(app)) {
+      return;
+    }
+
+    this.configurationDetailsFacadeService.markUnsavedChanges();
+    this._applications.update((apps) => apps.filter((a) => a !== app));
   }
 
   getApplicationById(id: number): TApplicationDTO | null {
@@ -213,12 +296,58 @@ export class ConfigurationAppsFacadeService {
     );
   }
 
+  // "Upgrade" link of an outdated app: after confirmation the server switches the configuration
+  // to the app's latest version at once (as in v5), then the configuration is reloaded.
+  // Unsaved changes would be lost by that reload, so they have to be saved first
+  upgradeApplication(app: TApplicationDTO): void {
+    const configurationId = this.configurationDetailsFacadeService.configurationId();
+    if (!configurationId) {
+      return;
+    }
+
+    if (this.configurationDetailsFacadeService.hasUnsavedChanges()) {
+      this.snackBarService.info('error.configuration.save.before.upgrade');
+      return;
+    }
+
+    const configurationName = this.configurationDetailsFacadeService.currentConfiguration()?.name ?? '';
+
+    this.dialog
+      .open(ConfirmDialog, {
+        data: {
+          message: 'question.app.upgrade',
+          params: { v1: app.name, v2: configurationName },
+          confirmButtonText: 'button.upgrade',
+        },
+      })
+      .afterClosed()
+      .pipe(
+        take(1),
+        filter(Boolean),
+        switchMap(() =>
+          this.configurationService.upgradeConfigurationApplication(configurationId, app.id),
+        ),
+      )
+      .subscribe((response) => {
+        // Errors are shown by the response interceptor
+        if (response.status === 'OK') {
+          this.configurationDetailsFacadeService.setCurrentConfigurationId(configurationId);
+        }
+      });
+  }
+
   setShowSystemApps(value: boolean): void {
     this.showSystemApps.set(value);
   }
 
   setSortState(state: TTableSortState | null): void {
     this._sortState.set(state);
+  }
+
+  // Entries with action 0 that were not changed here are apps outside the configuration:
+  // the server sends every app, those come back with action 0 and are not shown
+  private isListed(app: TApplicationDTO): boolean {
+    return app.action !== APP_ACTION.BLOCK || !!app.actionChanged;
   }
 
   private isInstallOptionAvailable(app: TApplicationDTO): boolean {

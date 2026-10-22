@@ -1,7 +1,22 @@
 <div class="cell">
-  @if (isDisplayed()) {
-    <button matIconButton (click)="openApplicationDialog()">
-      <mat-icon>more_vert</mat-icon>
+  <button
+    matIconButton
+    [class.cell-action-hidden]="!isDisplayed()"
+    (click)="openApplicationDialog()"
+  >
+    <mat-icon>more_vert</mat-icon>
+  </button>
+
+  <!-- The tooltip is on a wrapper: a disabled button doesn't receive mouse events -->
+  <div [matTooltip]="lockMessage() ?? '' | translate" [matTooltipDisabled]="!lockMessage()">
+    <button
+      matIconButton
+      [disabled]="!!lockMessage()"
+      [title]="'button.delete' | translate"
+      [attr.aria-label]="'button.delete' | translate"
+      (click)="removeApplication()"
+    >
+      <mat-icon>delete</mat-icon>
     </button>
-  }
+  </div>
 </div>

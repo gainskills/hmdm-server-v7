@@ -211,6 +211,7 @@
   "question.exit.without.saving": "変更は保存されません。 とにかくこのページを離れますか?",
   "question.turn2common.application": "アプリケーション \"{{applicationName}}\" を共有しますか?",
   "question.app.upgrade": "アプリケーション \"{{v1}}\" を構成 \"{{v2}}\" の最新バージョンに更新しますか?",
+  "error.configuration.save.before.upgrade": "アプリケーションを更新する前に構成を保存してください",
 
   "error.application.setting.empty.app": "アプリケーションを指定",
   "error.application.setting.empty.name": "名前を入力してください",
@@ -246,6 +247,10 @@
   "error.duplicate.customer.name": "入力された組織は既に存在します。別の名前を試してください。",
   "error.duplicate.group.name": "入力されたグループは既に存在します。別の名前を試してください。",
   "error.duplicate.configuration.name": "入力された構成は既に存在します。別の名前を試してください。",
+  "error.configuration.app.already.added": "このアプリケーションはすでに構成に含まれています",
+  "form.configuration.apps.main.app.cannot.uninstall": "メインアプリはアンインストールできません",
+  "form.configuration.apps.content.app.cannot.uninstall": "コンテンツアプリケーションはアンインストールできません",
+  "form.configuration.apps.delete.prompt": "構成からアプリを削除すると、アプリを起動できなくなります。削除しますか？",
   "error.duplicate.device.number": "この番号のデバイスは既に存在します",
   "error.internal.server": "内部サーバーエラー",
   "error.permission.denied": "実行する権限がありません",
