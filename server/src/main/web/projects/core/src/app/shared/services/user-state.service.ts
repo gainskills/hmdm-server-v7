@@ -21,7 +21,7 @@ export class UserStateService {
       });
   }
 
-  setCurrentUser(user: TUserDTO): void {
+  setCurrentUser(user: TUserDTO | null): void {
     this._currentUser.set(user);
   }
 }

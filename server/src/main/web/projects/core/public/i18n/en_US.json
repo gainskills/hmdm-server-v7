@@ -217,6 +217,7 @@
   "question.exit.without.saving": "Changes are not saved. Anyway leave this page?",
   "question.turn2common.application": "Share the application '{{applicationName}}'?",
   "question.app.upgrade": "Update application '{{v1}}' to latest version for configuration '{{v2}}'?",
+  "error.configuration.save.before.upgrade": "Save the configuration before upgrading an application",
 
   "error.application.setting.empty.app": "Specify application",
   "error.application.setting.empty.name": "Enter a name",
@@ -252,6 +253,10 @@
   "error.duplicate.customer.name": "The organization with the entered name already exists. Try a different name.",
   "error.duplicate.group.name": "The group with the entered name already exists. Try a different name.",
   "error.duplicate.configuration.name": "The configuration with the entered name already exists. Try a different name.",
+  "error.configuration.app.already.added": "This application is already in the configuration",
+  "form.configuration.apps.main.app.cannot.uninstall": "The main app couldn't be uninstalled",
+  "form.configuration.apps.content.app.cannot.uninstall": "The content app couldn't be uninstalled",
+  "form.configuration.apps.delete.prompt": "Deleting the app from the configuration will prevent it from being launched. Do you want to delete it?",
   "error.duplicate.device.number": "A device with this number already exists",
   "error.internal.server": "Internal server error",
   "error.permission.denied": "No rights to execute",

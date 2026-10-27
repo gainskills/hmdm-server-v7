@@ -69,19 +69,19 @@ export class SelectSearch extends BaseControlValueAccessor<unknown> implements O
     this.searchControl.valueChanges.pipe(this.untilDestroyed()).subscribe(() => {
       const option = this.searchControl.value;
 
+      // A picked entry first: entries whose values are text (e.g. time zone names) would
+      // otherwise be taken for typed search text and never reach the form control
+      const selectedOption = this.options().find((opt) => opt.value === option);
+      if (selectedOption) {
+        this.searchControl.setValue(this.getDisplayValue(selectedOption.viewValue), { emitEvent: false });
+        this.formControl.setValue(selectedOption.value);
+        return;
+      }
+
       if (typeof option === 'string') {
         this.searchTerm = option.toLowerCase();
         this.filteredOptions.set(this.getFilteredOptions());
-        return;
       }
-
-      const selectedOption = this.options().find((opt) => opt.value === option);
-      if (!selectedOption) {
-        return;
-      }
-
-      this.searchControl.setValue(this.getDisplayValue(selectedOption.viewValue), { emitEvent: false });
-      this.formControl.setValue(selectedOption.value);
     });
   }
 

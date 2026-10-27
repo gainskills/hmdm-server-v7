@@ -24,6 +24,17 @@ export class ConfigurationService {
   private readonly http: HttpClient = inject(HttpClient);
   private readonly snackBarService = inject(SnackBarService);
 
+  // Switches the configuration's app to its most recent uploaded version (saved on the server at once)
+  upgradeConfigurationApplication(
+    configurationId: number,
+    applicationId: number,
+  ): Observable<THttpResponse<TConfigurationDTO>> {
+    return this.http.put<THttpResponse<TConfigurationDTO>>(
+      'rest/private/configurations/application/upgrade',
+      { configurationId, applicationId },
+    );
+  }
+
   getConfigurationsById(id: number): Observable<TConfigurationDTO> {
     return this.http
       .get<THttpResponse<TConfigurationDTO>>(`rest/private/configurations/${id}`)

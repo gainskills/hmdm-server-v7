@@ -211,6 +211,7 @@
   "question.exit.without.saving": "Los cambios no fueron guardados. Desea salir de esta pagina de todos modos?",
   "question.turn2common.application": "Compartir aplicacion \"{{applicationName}}}}\"?",
   "question.app.upgrade": "Actualizar aplicacion \"{{v1}}}}\" a la ultima version \"{{v2}}}}\"?",
+  "error.configuration.save.before.upgrade": "Guarde la configuración antes de actualizar una aplicación",
 
   "error.application.setting.empty.app": "Especificar aplicacion",
   "error.application.setting.empty.name": "Ingrese un nombre",
@@ -246,6 +247,10 @@
   "error.duplicate.customer.name": "La organizacion con el nombre elegido ya existe. Intente un nombre diferente.",
   "error.duplicate.group.name": "El grupo con el nombre elegido ya existe. Intente un nombre diferente.",
   "error.duplicate.configuration.name": "La configuración con el nombre elegido ya existe. Intente un nombre diferente.",
+  "error.configuration.app.already.added": "Esta aplicación ya está en la configuración",
+  "form.configuration.apps.main.app.cannot.uninstall": "La aplicación principal no se puede desinstalar",
+  "form.configuration.apps.content.app.cannot.uninstall": "La aplicación de contenido no se puede desinstalar",
+  "form.configuration.apps.delete.prompt": "Eliminar la aplicación de la configuración impedirá que se ejecute. ¿Desea eliminarla?",
   "error.duplicate.device.number": "Ya existe un dispositivo con este número",
   "error.internal.server": "Error interno del servidor",
   "error.permission.denied": "No posee permisos para ejecutar",

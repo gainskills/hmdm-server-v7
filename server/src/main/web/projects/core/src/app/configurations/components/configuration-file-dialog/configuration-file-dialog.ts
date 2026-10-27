@@ -92,11 +92,11 @@ export class ConfigurationFileDialog extends DialogBase implements OnInit {
   private initEditMode(): void {
     const configFile: TConfigurationFileDTO = this.data.configFile;
     this.filePathControl.setValue(configFile.filePath ?? '');
-    this.devicePathControl.setValue(configFile.devicePath);
+    this.devicePathControl.setValue(configFile.path);
     this.descriptionControl.setValue(configFile.description ?? '');
-    this.overridePathControl.setValue(configFile.overrideDevicePath ?? false, { emitEvent: false });
+    this.overridePathControl.setValue(configFile.overridePath ?? false, { emitEvent: false });
     this.remove.setValue(configFile.remove, { emitEvent: false });
-    if (configFile.overrideDevicePath) {
+    if (configFile.overridePath) {
       this.devicePathControl.enable();
     }
   }
@@ -132,7 +132,7 @@ export class ConfigurationFileDialog extends DialogBase implements OnInit {
       } else {
         this.devicePathControl.disable();
         if (this.isEditMode) {
-          this.devicePathControl.setValue(this.data.configFile.devicePath);
+          this.devicePathControl.setValue(this.data.configFile.path);
         } else {
           const id = this.fileIdControl.value;
           if (id) {
@@ -206,8 +206,8 @@ export class ConfigurationFileDialog extends DialogBase implements OnInit {
     const overridePath = this.overridePathControl.value;
     this.dialogRef.close({
       ...configFile,
-      devicePath: overridePath ? this.devicePathControl.getRawValue() : configFile.devicePath,
-      overrideDevicePath: overridePath,
+      path: overridePath ? this.devicePathControl.getRawValue() : configFile.path,
+      overridePath: overridePath,
       remove: this.remove.value,
     });
   }
@@ -294,8 +294,8 @@ export class ConfigurationFileDialog extends DialogBase implements OnInit {
       fileId: file.id,
       url: file.url,
       replaceVariables: file.replaceVariables,
-      devicePath: file.devicePath,
-      overrideDevicePath: overridePath,
+      path: file.devicePath,
+      overridePath: overridePath,
     };
   }
 

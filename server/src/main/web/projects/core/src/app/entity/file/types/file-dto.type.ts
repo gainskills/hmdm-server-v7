@@ -7,6 +7,8 @@ export type TFileDTO = {
   uploadTime: number;
   devicePath: string;
   external: boolean;
+  // Sent when saving an external file: the server stores the URL from this field
+  externalUrl?: string;
   replaceVariables: boolean;
   usedByApps: boolean | null;
   usedByIcons: string[];

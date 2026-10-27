@@ -60,23 +60,15 @@ export class ConfigurationDetails extends BaseComponent implements OnInit {
       .applications()
       .filter((app) => app.action !== APP_ACTION.BLOCK);
 
-    if (this.configurationDetailsFacadeService.configurationId()) {
-      const config = this.configurationDetailsFacadeService.getUpdatedConfiguration();
+    const config = this.configurationDetailsFacadeService.configurationId()
+      ? this.configurationDetailsFacadeService.getUpdatedConfiguration()
+      : this.configurationDetailsFacadeService.getNewConfiguration();
 
-      if (!config) {
-        return;
-      }
-
-      this.configurationDetailsFacadeService.saveConfiguration({ ...config, applications });
-    } else {
-      const config = this.configurationDetailsFacadeService.getNewConfiguration();
-
-      if (!config) {
-        return;
-      }
-
-      this.configurationDetailsFacadeService.saveConfiguration({ ...config, applications });
+    if (!config || !this.configurationDetailsFacadeService.checkConfigConsistency(config)) {
+      return;
     }
+
+    this.configurationDetailsFacadeService.saveConfiguration({ ...config, applications });
   }
 
   onCancel(): void {

@@ -211,6 +211,7 @@
   "question.exit.without.saving": "Änderungen werden nicht gespeichert. Wie auch immer, diese Seite verlassen?",
   "question.turn2common.application": "Teile die Anwendung \"{{applicationName}}\"?",
   "question.app.upgrade": "Anwendung \"{{v1}}\" auf die neueste Version für Konfiguration \"{{v2}}\" aktualisieren?",
+  "error.configuration.save.before.upgrade": "Speichern Sie die Konfiguration, bevor Sie eine Anwendung aktualisieren",
 
   "error.application.setting.empty.app": "Anwendung denfinieren",
   "error.application.setting.empty.name": "Namen einfügen",
@@ -246,6 +247,10 @@
   "error.duplicate.customer.name": "Die Organisation mit dem eingegebenen Namen existiert bereits. Versuchen Sie es mit einem anderen Namen. ",
   "error.duplicate.group.name": "Die Gruppe mit dem eingegebenen Namen existiert bereits. Versuchen Sie es mit einem anderen Namen. ",
   "error.duplicate.configuration.name": "Die Konfiguration mit dem eingegebenen Namen ist bereits vorhanden. Versuchen Sie es mit einem anderen Namen. ",
+  "error.configuration.app.already.added": "Diese Anwendung ist bereits in der Konfiguration",
+  "form.configuration.apps.main.app.cannot.uninstall": "Die Haupt-App kann nicht deinstalliert werden",
+  "form.configuration.apps.content.app.cannot.uninstall": "Die Inhaltsanwendung kann nicht deinstalliert werden",
+  "form.configuration.apps.delete.prompt": "Wenn die Anwendung aus der Konfiguration gelöscht wird, kann sie nicht mehr gestartet werden. Möchten Sie sie löschen?",
   "error.duplicate.device.number": "Ein Gerät mit dieser Nummer existiert bereits",
   "error.internal.server": "Interner Serverfehler",
   "error.permission.denied": "Keine Ausführungsrechte",

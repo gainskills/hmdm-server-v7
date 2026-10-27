@@ -211,6 +211,7 @@
   "question.exit.without.saving": "لا يتم حفظ التغييرات. على أي حال مغادرة هذه الصفحة؟ ",
   "question.turn2common.application": "؟ \"{{applicationName}}\" مشاركة التطبيق",
   "question.app.upgrade": "؟ \"{{v2}}\" إلى أحدث إصدار للتهيئة \"{{v1}}\" هل تريد تحديث التطبيق ",
+  "error.configuration.save.before.upgrade": "احفظ الإعدادات قبل تحديث التطبيق",
 
   "error.application.setting.empty.app": "حدد التطبيق",
   "error.application.setting.empty.name": "أدخل اسمًا",
@@ -246,6 +247,10 @@
   "error.duplicate.customer.name": "المؤسسة التي تحمل الاسم المدخل موجودة بالفعل. جرب اسما مختلفا. ",
   "error.duplicate.group.name": "المجموعة ذات الاسم المدخل موجودة بالفعل. جرب اسما مختلفا. ",
   "error.duplicate.configuration.name": "الاعداد بالاسم المدخل موجود بالفعل. جرب اسما مختلفا. ",
+  "error.configuration.app.already.added": "هذا التطبيق موجود بالفعل في الإعدادات",
+  "form.configuration.apps.main.app.cannot.uninstall": "لا يمكن إلغاء تثبيت التطبيق الرئيسي",
+  "form.configuration.apps.content.app.cannot.uninstall": "لا يمكن إلغاء تثبيت تطبيق المحتوى",
+  "form.configuration.apps.delete.prompt": "سيؤدي حذف التطبيق من التكوين إلى منع تشغيله. هل تريد حذفه؟",
   "error.duplicate.device.number": "يوجد بالفعل جهاز بهذا الرقم",
   "error.internal.server": "خطأ داخلي في الخادم",
   "error.permission.denied": "لا توجد حقوق للتنفيذ",

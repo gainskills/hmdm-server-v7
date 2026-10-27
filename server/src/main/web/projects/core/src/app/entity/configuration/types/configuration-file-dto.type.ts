@@ -9,6 +9,7 @@ export type TConfigurationFileDTO = {
   fileId: number;
   url: string;
   replaceVariables: boolean;
-  devicePath: string;
-  overrideDevicePath?: boolean;
+  // The server's JSON names (ConfigurationFile: @JsonProperty "path" and "overridePath")
+  path: string;
+  overridePath?: boolean;
 };

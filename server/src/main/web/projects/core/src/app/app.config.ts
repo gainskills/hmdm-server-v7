@@ -55,7 +55,9 @@ export const appConfig: ApplicationConfig = {
       }),
     }),
     provideServiceWorker('ngsw-worker.js', {
-      enabled: !isDevMode(),
+      // The service worker's file list (ngsw.json) is built for the server root,
+      // so it is only used when the panel runs there
+      enabled: !isDevMode() && new URL(document.baseURI).pathname === '/',
       registrationStrategy: 'registerWhenStable:30000',
     }),
     ConfigurationsOptionsService,

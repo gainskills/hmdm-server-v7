@@ -211,6 +211,7 @@
   "question.exit.without.saving": "Изменения не сохранены. Всё равно покинуть эту страницу?",
   "question.turn2common.application": "Сделать общим приложение \"{{applicationName}}\"?",
   "question.app.upgrade": "Обновить приложение \"{{v1}}\" до последней версии для конфигурации \"{{v2}}\"?",
+  "error.configuration.save.before.upgrade": "Сохраните конфигурацию перед обновлением приложения",
 
   "error.application.setting.empty.app": "Укажите приложение",
   "error.application.setting.empty.name": "Укажите название",
@@ -246,6 +247,10 @@
   "error.duplicate.customer.name": "Организация с введенным именем уже существует. Попробуйте другое имя.",
   "error.duplicate.group.name": "Группа с введенным именем уже существует. Попробуйте другое имя.",
   "error.duplicate.configuration.name": "Конфигурация с введенным именем уже существует. Попробуйте другое имя.",
+  "error.configuration.app.already.added": "Это приложение уже есть в конфигурации",
+  "form.configuration.apps.main.app.cannot.uninstall": "Основное приложение нельзя удалить",
+  "form.configuration.apps.content.app.cannot.uninstall": "Контентное приложение нельзя удалить",
+  "form.configuration.apps.delete.prompt": "Удаление приложения из конфигурации не позволит его запускать. Вы хотите удалить его?",
   "error.duplicate.device.number": "Устройство с таким номером уже существует",
   "error.internal.server": "Внутренняя ошибка сервера",
   "error.permission.denied": "Нет прав для выполнения",
